@@ -58,12 +58,11 @@ export const getBookings = async (guestId: string) => {
   return data;
 };
 
-export async function deleteBooking(id: string) {
-  const { data, error } = await supabase.from("bookings").delete().eq("id", id);
-
-  if (error) {
-    console.error(error);
-    throw new Error("Booking could not be deleted");
-  }
-  return data;
-}
+// BRISANJE JE U actions.ts
+// export async function deleteBooking(id: string) {
+//   const { error } = await supabase.from("bookings").delete().eq("id", id);
+//   if (error) {
+//     console.error(error);
+//     throw new Error("Booking could not be deleted");
+//   }
+// }

@@ -10,9 +10,10 @@ const ReservationList = ({
 }: {
   bookings: BookingType[] | undefined;
 }) => {
-  const handleDelete = async (bookingId: string) => {
-    await deleteBooking(bookingId);
-  };
+  // const handleDelete = async (bookingId: string) => {
+
+  //   await deleteBooking(bookingId);
+  // };
 
   return (
     <ul className="space-y-6">
@@ -20,7 +21,10 @@ const ReservationList = ({
         bookings.map((booking) => (
           <ReservationCard
             booking={booking}
-            onDelete={handleDelete}
+            onDelete={(id: string) => {
+              console.log(id);
+            }}
+            // onDelete={handleDelete}
             key={booking.id}
           />
         ))}

@@ -13,7 +13,6 @@ const Reservations = async () => {
   const session = await auth();
 
   const bookings = session?.user && (await getBookings(session.user.guestId!));
-  console.log(bookings);
 
   return (
     <div>

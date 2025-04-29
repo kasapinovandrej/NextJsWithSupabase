@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import supabase from "./supabase";
 import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "./auth";
+import { deleteBooking, getBookings } from "./data-service";
 
 export async function createBooking(bookingData: any, formData: FormData) {
   // const session = await auth();
@@ -53,7 +54,6 @@ export const updateGuest = async (formData: FormData) => {
     throw new Error("Please provide a valid national ID");
 
   const updateData = { nationality, countryFlag, nationalID };
-  console.log(updateData);
 
   const { data, error } = await supabase
     .from("guests")
@@ -63,4 +63,27 @@ export const updateGuest = async (formData: FormData) => {
   if (error) throw new Error("Guest could not be updated");
 
   revalidatePath("/account/profile");
+};
+
+export const deleteReservation = async (bookingId: string) => {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in");
+
+  // OVAKO STITIM DA NE AUTENTIFIKOVANI USER MOZE DA BRISE BOOKINGS U TERMINALU
+  const guestBookings = await getBookings(session?.user?.guestId);
+  const guestBookingIds = guestBookings.map((el) => el.id);
+  if (!guestBookingIds.includes(bookingId)) {
+    throw new Error("You are not allowed to delete this booking");
+  }
+  // ////////////////////////////////////////////////////////////////////////////
+  const { error } = await supabase
+    .from("bookings")
+    .delete()
+    .eq("id", bookingId);
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be deleted");
+  }
+
+  revalidatePath("/account/reservations");
 };
