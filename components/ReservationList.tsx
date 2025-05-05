@@ -1,31 +1,35 @@
 "use client";
 
-import React from "react";
+import React, { useOptimistic } from "react";
 import { BookingType } from "@/lib/apiTypes";
 import ReservationCard from "./ReservationCard";
-import { deleteBooking } from "@/lib/data-service";
+import { deleteReservation } from "@/lib/actions";
 
 const ReservationList = ({
   bookings,
 }: {
   bookings: BookingType[] | undefined;
 }) => {
-  // const handleDelete = async (bookingId: string) => {
+  const [optimisticBookings, optimisticDelete] = useOptimistic(
+    bookings,
+    (currentBookings, bookingId) => {
+      return currentBookings?.filter((el) => el.id !== bookingId);
+    }
+  );
 
-  //   await deleteBooking(bookingId);
-  // };
+  const handleDelete = async (bookingId: string) => {
+    optimisticDelete(bookingId);
+    await deleteReservation(bookingId);
+  };
 
   return (
     <ul className="space-y-6">
-      {bookings &&
-        bookings.map((booking) => (
+      {optimisticBookings &&
+        optimisticBookings.map((booking) => (
           <ReservationCard
             booking={booking}
-            onDelete={(id: string) => {
-              console.log(id);
-            }}
-            // onDelete={handleDelete}
             key={booking.id}
+            onDelete={handleDelete}
           />
         ))}
     </ul>

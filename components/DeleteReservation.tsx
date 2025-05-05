@@ -2,7 +2,6 @@
 import React, { useTransition } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import SpinnerMini from "./SpinnerMini";
-import { deleteReservation } from "@/lib/actions";
 
 const DeleteReservation = ({
   bookingId,
@@ -15,8 +14,8 @@ const DeleteReservation = ({
 
   function handleDelete() {
     if (confirm("Are you sure you want to delete this reservation?"))
-      // startTransition(() => onDelete(bookingId));
-      startTransition(() => deleteReservation(bookingId));
+      startTransition(() => onDelete(bookingId));
+    // startTransition(() => deleteReservation(bookingId));
   }
 
   return (

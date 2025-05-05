@@ -44,15 +44,27 @@ export const createGuest = async (newGuest: {
 export const getBookings = async (guestId: string) => {
   const { data, error } = await supabase
     .from("bookings")
-    .select(
-      `id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, cabins!bookings_cabinId_fkey(name, image)`
-    )
+    .select(`*, cabins!bookings_cabinId_fkey(name, image)`)
     .eq("guestId", guestId)
     .order("startDate");
 
   if (error) {
     console.log(error);
     throw new Error("Bookings could not get loaded");
+  }
+
+  return data;
+};
+
+export const getBooking = async (bookingId: string) => {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("id", bookingId)
+    .single();
+
+  if (error) {
+    throw new Error("Booking could not get loaded");
   }
 
   return data;
